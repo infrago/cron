@@ -5,12 +5,12 @@ import (
 	"github.com/robfig/cron/v3"
 )
 
-func (this *Module) Register(name string, value Any, override bool) {
+func (this *Module) Register(name string, value Any) {
 	switch config := value.(type) {
 	case Job:
-		this.Job(name, config, override)
+		this.Job(name, config)
 	case Filter:
-		this.Filter(name, config, override)
+		this.Filter(name, config)
 	}
 }
 
@@ -79,7 +79,7 @@ func (this *Module) Connect() {
 			})
 
 			if err != nil {
-				panic("[plan]注册计划失败：" + err.Error())
+				panic("[cron]注册失败：" + err.Error())
 			}
 
 			// ids = append(ids, id)

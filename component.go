@@ -2,6 +2,7 @@ package cron
 
 import (
 	. "github.com/infrago/base"
+	"github.com/infrago/infra"
 )
 
 type (
@@ -25,8 +26,8 @@ type (
 	}
 )
 
-func (this *Module) Job(name string, config Job, override bool) {
-	if override {
+func (this *Module) Job(name string, config Job) {
+	if infra.Override() {
 		this.jobs[name] = config
 	} else {
 		if _, ok := this.jobs[name]; ok == false {
@@ -36,8 +37,8 @@ func (this *Module) Job(name string, config Job, override bool) {
 }
 
 // Filter 注册 拦截器
-func (this *Module) Filter(name string, config Filter, override bool) {
-	if override {
+func (this *Module) Filter(name string, config Filter) {
+	if infra.Override() {
 		this.filters[name] = config
 	} else {
 		if _, ok := this.filters[name]; ok == false {
