@@ -8,10 +8,9 @@ import (
 )
 
 func (this *Instance) Serve(name string) {
-
-	//加锁，防止多节点并发多次调用
+	//是否考虑内置？要不然还依赖模块
 	if mutex.Locked("cron", name, time.Now().Unix()) {
-		return
+		return //加锁，防止多节点并发多次调用
 	}
 
 	config, ok := this.module.jobs[name]
