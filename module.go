@@ -49,6 +49,6 @@ type (
 		Setting Map
 	}
 	Instance struct {
-		module *Module
+		// module *Module
 	}
 )

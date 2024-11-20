@@ -9,11 +9,11 @@ import (
 
 func (this *Instance) Serve(name string) {
 	//是否考虑内置？要不然还依赖模块
-	if mutex.Locked("cron", name, time.Now().Unix()) {
+	if mutex.Locked("cron", name, time.Now().Unix(), time.Second) {
 		return //加锁，防止多节点并发多次调用
 	}
 
-	config, ok := this.module.jobs[name]
+	config, ok := module.jobs[name]
 	if ok == false {
 		return
 	}
@@ -36,7 +36,7 @@ func (this *Instance) execute(ctx *Context) {
 	ctx.clear()
 
 	//拦截器
-	ctx.next(this.module.filterActions...)
+	ctx.next(module.filterActions...)
 	if ctx.Config.Actions != nil || len(ctx.Config.Actions) > 0 {
 		ctx.next(ctx.Config.Actions...)
 	}

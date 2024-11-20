@@ -1,7 +1,11 @@
 package cron
 
 import (
+	"fmt"
+	"log"
+
 	. "github.com/infrago/base"
+	"github.com/infrago/infra"
 	"github.com/robfig/cron/v3"
 )
 
@@ -65,7 +69,7 @@ func (this *Module) Connect() {
 	// this.cronEntries = make(map[string][]string, 0)
 
 	inst := &Instance{
-		this,
+		// this,
 	}
 
 	for key, times := range this.jobTimes {
@@ -98,6 +102,8 @@ func (this *Module) Launch() {
 	}
 
 	this.cron.Start()
+
+	log.Println(fmt.Sprintf("%s CRON is running with %d jobs.", infra.INFRAGO, len(this.jobs)))
 
 	this.launched = true
 }
