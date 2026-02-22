@@ -152,7 +152,7 @@ func cloneStrings(src []string) []string {
 func cloneLog(log Log) Log {
 	return Log{
 		Job:       log.Job,
-		Spec:      log.Spec,
+		Schedule:  log.Schedule,
 		Target:    log.Target,
 		Payload:   cloneMap(log.Payload),
 		Triggered: log.Triggered,

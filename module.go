@@ -61,29 +61,29 @@ type (
 	}
 
 	Job struct {
-		Name      string
-		Desc      string
-		Target    string
-		Schedule  string
-		Schedules []string
-		Disabled  bool
-		Payload   Map
-		Setting   Map
+		Name      string   `json:"name"`
+		Desc      string   `json:"desc"`
+		Target    string   `json:"target"`
+		Schedule  string   `json:"schedule"`
+		Schedules []string `json:"schedules"`
+		Disabled  bool     `json:"disabled"`
+		Payload   Map      `json:"payload"`
+		Setting   Map      `json:"setting"`
 	}
 
 	Jobs map[string]Job
 
 	Log struct {
-		Job       string
-		Spec      string
-		Target    string
-		Payload   Map
-		Triggered time.Time
-		Started   time.Time
-		Ended     time.Time
-		Success   bool
-		State     string
-		Error     string
+		Job       string    `json:"job"`
+		Schedule  string    `json:"schedule"`
+		Target    string    `json:"target"`
+		Payload   Map       `json:"payload"`
+		Triggered time.Time `json:"triggered"`
+		Started   time.Time `json:"started"`
+		Ended     time.Time `json:"ended"`
+		Success   bool      `json:"success"`
+		State     string    `json:"state"`
+		Error     string    `json:"error"`
 	}
 
 	scheduleItem struct {
@@ -415,7 +415,7 @@ func (m *Module) execute(job Job, spec string, dueTime time.Time) {
 
 		log := Log{
 			Job:       job.Name,
-			Spec:      spec,
+			Schedule:  spec,
 			Target:    job.Target,
 			Payload:   cloneMap(payload),
 			Triggered: dueTime,
