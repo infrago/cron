@@ -1,0 +1,40 @@
+package cron
+
+func Add(name string, job Job) error {
+	return module.Upsert(name, job)
+}
+
+func Remove(name string) error {
+	return module.Delete(name)
+}
+
+func GetJobs() map[string]Job {
+	module.mutex.RLock()
+	defer module.mutex.RUnlock()
+
+	out := make(map[string]Job, len(module.jobs))
+	for name, job := range module.jobs {
+		out[name] = cloneJob(job)
+	}
+	return out
+}
+
+func RegisterJobs(jobs Jobs) {
+	module.RegisterJobs(jobs)
+}
+
+func RegisterJob(name string, job Job) {
+	module.RegisterJob(name, job)
+}
+
+func RegisterConfig(config Config) {
+	module.RegisterConfig(config)
+}
+
+func RegisterDriver(name string, driver Driver) {
+	module.RegisterDriver(name, driver)
+}
+
+func GetLogs(jobName string, offset, limit int) (int64, []Log) {
+	return module.GetLogs(jobName, offset, limit)
+}
