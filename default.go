@@ -53,6 +53,32 @@ func (c *defaultConnect) Add(name string, job Job) error {
 	return nil
 }
 
+func (c *defaultConnect) Enable(name string) error {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+
+	job, ok := c.jobs[name]
+	if !ok {
+		return nil
+	}
+	job.Disabled = false
+	c.jobs[name] = cloneJob(job)
+	return nil
+}
+
+func (c *defaultConnect) Disable(name string) error {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+
+	job, ok := c.jobs[name]
+	if !ok {
+		return nil
+	}
+	job.Disabled = true
+	c.jobs[name] = cloneJob(job)
+	return nil
+}
+
 func (c *defaultConnect) Remove(name string) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()

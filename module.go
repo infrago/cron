@@ -333,6 +333,38 @@ func (m *Module) Delete(name string) error {
 	return nil
 }
 
+func (m *Module) Enable(name string) error {
+	return m.setDisabled(name, false)
+}
+
+func (m *Module) Disable(name string) error {
+	return m.setDisabled(name, true)
+}
+
+func (m *Module) setDisabled(name string, disabled bool) error {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	job, ok := m.jobs[name]
+	if !ok {
+		return fmt.Errorf("job %s not found", name)
+	}
+	if job.Disabled == disabled {
+		return nil
+	}
+
+	job.Disabled = disabled
+	m.jobs[name] = cloneJob(job)
+
+	if m.connect == nil {
+		return nil
+	}
+	if disabled {
+		return m.connect.Disable(name)
+	}
+	return m.connect.Enable(name)
+}
+
 func (m *Module) loop() {
 	defer m.wg.Done()
 

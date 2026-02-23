@@ -15,6 +15,10 @@ type (
 
 		// Add stores or updates one job definition.
 		Add(name string, job Job) error
+		// Enable marks one job as enabled.
+		Enable(name string) error
+		// Disable marks one job as disabled.
+		Disable(name string) error
 		// Remove deletes one job definition.
 		Remove(name string) error
 		// List returns all persisted job definitions.

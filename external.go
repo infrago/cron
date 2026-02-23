@@ -8,6 +8,14 @@ func Remove(name string) error {
 	return module.Delete(name)
 }
 
+func Enable(name string) error {
+	return module.Enable(name)
+}
+
+func Disable(name string) error {
+	return module.Disable(name)
+}
+
 func GetJobs() map[string]Job {
 	module.mutex.RLock()
 	defer module.mutex.RUnlock()
