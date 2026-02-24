@@ -1,9 +1,9 @@
 package cron
 
 func (Job) RegistryComponent() string {
-	return "cron.job"
+	return "cron"
 }
 
 func (Jobs) RegistryComponent() string {
-	return "cron.job"
+	return "cron"
 }
