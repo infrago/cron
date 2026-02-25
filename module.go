@@ -276,6 +276,7 @@ func (m *Module) Start() {
 
 	m.wg.Add(1)
 	go m.loop()
+	fmt.Printf("bamgoo cron module is running with %d jobs.\n", len(m.jobs))
 }
 
 func (m *Module) Stop() {
