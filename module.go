@@ -369,7 +369,19 @@ func (m *Module) setDisabled(name string, disabled bool) error {
 func (m *Module) loop() {
 	defer m.wg.Done()
 
-	ticker := time.NewTicker(m.config.Tick)
+	tick := m.config.Tick
+	if tick <= 0 {
+		tick = time.Second
+	}
+
+	// Align the scheduler phase to tick boundary, so cron execution is not
+	// consistently offset by process start time (e.g. always +317ms).
+	if !waitAlignedTick(tick, m.stopCh) {
+		return
+	}
+	m.dispatchDue(time.Now())
+
+	ticker := time.NewTicker(tick)
 	syncTicker := time.NewTicker(m.config.Sync)
 	defer ticker.Stop()
 	defer syncTicker.Stop()
@@ -383,6 +395,29 @@ func (m *Module) loop() {
 		case <-m.stopCh:
 			return
 		}
+	}
+}
+
+func waitAlignedTick(tick time.Duration, stop <-chan struct{}) bool {
+	if tick <= 0 {
+		return true
+	}
+
+	now := time.Now()
+	next := now.Truncate(tick).Add(tick)
+	wait := next.Sub(now)
+	if wait <= 0 {
+		return true
+	}
+
+	timer := time.NewTimer(wait)
+	defer timer.Stop()
+
+	select {
+	case <-timer.C:
+		return true
+	case <-stop:
+		return false
 	}
 }
 
@@ -580,7 +615,7 @@ func jobsEqual(a, b map[string]Job) bool {
 	return true
 }
 
-func (m *Module) GetLogs(jobName string, offset, limit int) (int64, []Log) {
+func (m *Module) ListLogs(jobName string, offset, limit int) (int64, []Log) {
 	m.mutex.RLock()
 	conn := m.connect
 	m.mutex.RUnlock()

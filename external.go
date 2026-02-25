@@ -16,7 +16,7 @@ func Disable(name string) error {
 	return module.Disable(name)
 }
 
-func GetJobs() map[string]Job {
+func ListJobs() map[string]Job {
 	module.mutex.RLock()
 	defer module.mutex.RUnlock()
 
@@ -43,6 +43,6 @@ func RegisterDriver(name string, driver Driver) {
 	module.RegisterDriver(name, driver)
 }
 
-func GetLogs(jobName string, offset, limit int) (int64, []Log) {
-	return module.GetLogs(jobName, offset, limit)
+func ListLogs(jobName string, offset, limit int) (int64, []Log) {
+	return module.ListLogs(jobName, offset, limit)
 }
