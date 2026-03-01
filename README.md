@@ -1,79 +1,57 @@
 # cron
 
-`cron` 是 infrago 的模块包。
+`cron` 是 infrago 的**模块**。
 
-## 安装
+## 包定位
 
-```bash
-go get github.com/infrago/cron@latest
-```
+- 类型：模块
+- 作用：定时任务模块，负责任务注册、调度与执行。
 
-## 最小接入
+## 主要功能
+
+- 对上提供统一模块接口
+- 对下通过驱动接口接入具体后端
+- 支持按配置切换驱动实现
+
+## 快速接入
 
 ```go
-package main
-
-import (
-    _ "github.com/infrago/cron"
-    "github.com/infrago/infra"
-)
-
-func main() {
-    infra.Run()
-}
+import _ "github.com/infrago/cron"
 ```
-
-## 配置示例
 
 ```toml
 [cron]
 driver = "default"
 ```
 
-## 公开 API（摘自源码）
+## 驱动实现接口列表
 
-- `func (Job) RegistryComponent() string`
-- `func (Jobs) RegistryComponent() string`
-- `func (d *defaultDriver) Connection(_ *Instance) (Connection, error)`
-- `func (c *defaultConnect) Open() error  { return nil }`
-- `func (c *defaultConnect) Close() error { return nil }`
-- `func (c *defaultConnect) List() (map[string]Job, error)`
-- `func (c *defaultConnect) Add(name string, job Job) error`
-- `func (c *defaultConnect) Enable(name string) error`
-- `func (c *defaultConnect) Disable(name string) error`
-- `func (c *defaultConnect) Remove(name string) error`
-- `func (c *defaultConnect) AppendLog(log Log) error`
-- `func (c *defaultConnect) History(jobName string, offset, limit int) (int64, []Log, error)`
-- `func (c *defaultConnect) Lock(key string, ttl time.Duration) (bool, error)`
-- `func Add(name string, job Job) error`
-- `func Remove(name string) error`
-- `func Enable(name string) error`
-- `func Disable(name string) error`
-- `func ListJobs() map[string]Job`
-- `func RegisterJobs(jobs Jobs)`
-- `func RegisterJob(name string, job Job)`
-- `func RegisterConfig(config Config)`
-- `func RegisterDriver(name string, driver Driver)`
-- `func ListLogs(jobName string, offset, limit int) (int64, []Log)`
-- `func (m *Module) Register(name string, value Any)`
-- `func (m *Module) RegisterDriver(name string, driver Driver)`
-- `func (m *Module) RegisterConfig(config Config)`
-- `func (m *Module) RegisterJob(name string, job Job)`
-- `func (m *Module) RegisterJobs(jobs Jobs)`
-- `func (m *Module) Config(global Map)`
-- `func (m *Module) Setup()`
-- `func (m *Module) Open()`
-- `func (m *Module) Start()`
-- `func (m *Module) Stop()`
-- `func (m *Module) Close()`
-- `func (m *Module) Upsert(name string, job Job) error`
-- `func (m *Module) Delete(name string) error`
-- `func (m *Module) Enable(name string) error`
-- `func (m *Module) Disable(name string) error`
-- `func (m *Module) ListLogs(jobName string, offset, limit int) (int64, []Log)`
+以下接口由驱动实现（来自模块 `driver.go`）：
 
-## 排错
+### Driver
 
-- 模块未运行：确认空导入已存在
-- driver 无效：确认驱动包已引入
-- 配置不生效：检查配置段名是否为 `[cron]`
+- `Connection(*Instance) (Connection, error)`
+
+### Connection
+
+- `Open() error`
+- `Close() error`
+- `Add(name string, job Job) error`
+- `Enable(name string) error`
+- `Disable(name string) error`
+- `Remove(name string) error`
+- `List() (map[string]Job, error)`
+- `AppendLog(log Log) error`
+- `History(jobName string, offset, limit int) (int64, []Log, error)`
+- `Lock(key string, ttl time.Duration) (bool, error)`
+
+## 全局配置项（所有配置键）
+
+配置段：`[cron]`
+
+- 未检测到配置键（请查看模块源码的 configure 逻辑）
+
+## 说明
+
+- `setting` 一般用于向具体驱动透传专用参数
+- 多实例配置请参考模块源码中的 Config/configure 处理逻辑
