@@ -492,7 +492,7 @@ func (m *Module) execute(job Job, spec string, dueTime time.Time) {
 			Success:   true,
 		}
 		if res != nil {
-			log.State = res.State()
+			log.State = res.Status()
 			if res.Fail() {
 				log.Success = false
 				log.Error = res.Error()
