@@ -6,18 +6,18 @@ import (
 	"sync"
 	"time"
 
-	"github.com/bamgoo/bamgoo"
-	. "github.com/bamgoo/base"
+	"github.com/infrago/infra"
+	. "github.com/infrago/base"
 	robcron "github.com/robfig/cron/v3"
 )
 
 func init() {
-	bamgoo.Mount(module)
+	infra.Mount(module)
 }
 
 var module = &Module{
 	config: Config{
-		Driver:  bamgoo.DEFAULT,
+		Driver:  infra.DEFAULT,
 		Tick:    time.Second,
 		Sync:    time.Second * 5,
 		LockTTL: time.Second * 30,
@@ -112,12 +112,12 @@ func (m *Module) RegisterDriver(name string, driver Driver) {
 	defer m.mutex.Unlock()
 
 	if name == "" {
-		name = bamgoo.DEFAULT
+		name = infra.DEFAULT
 	}
 	if driver == nil {
 		panic("invalid cron driver: " + name)
 	}
-	if bamgoo.Override() {
+	if infra.Override() {
 		m.drivers[name] = driver
 	} else if _, ok := m.drivers[name]; !ok {
 		m.drivers[name] = driver
@@ -207,7 +207,7 @@ func (m *Module) Setup() {
 	defer m.mutex.Unlock()
 
 	if m.config.Driver == "" {
-		m.config.Driver = bamgoo.DEFAULT
+		m.config.Driver = infra.DEFAULT
 	}
 	if m.config.Tick <= 0 {
 		m.config.Tick = time.Second
@@ -253,7 +253,7 @@ func (m *Module) Open() {
 	stored, err := conn.List()
 	if err == nil {
 		for name, job := range stored {
-			if _, exists := m.jobs[name]; !exists || bamgoo.Override() {
+			if _, exists := m.jobs[name]; !exists || infra.Override() {
 				m.jobs[name] = cloneJob(job)
 			}
 		}
@@ -276,7 +276,7 @@ func (m *Module) Start() {
 
 	m.wg.Add(1)
 	go m.loop()
-	fmt.Printf("bamgoo cron module is running with %d jobs.\n", len(m.jobs))
+	fmt.Printf("infrago cron module is running with %d jobs.\n", len(m.jobs))
 }
 
 func (m *Module) Stop() {
@@ -472,7 +472,7 @@ func (m *Module) execute(job Job, spec string, dueTime time.Time) {
 
 	go func() {
 		started := time.Now()
-		meta := bamgoo.NewMeta()
+		meta := infra.NewMeta()
 		payload := cloneMap(job.Payload)
 		if payload == nil {
 			payload = Map{}

@@ -1,2 +1,2 @@
 # cron
-bamgoo cron module.
+infrago cron module.
