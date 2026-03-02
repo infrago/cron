@@ -27,22 +27,6 @@ func ListJobs() map[string]Job {
 	return out
 }
 
-func RegisterJobs(jobs Jobs) {
-	module.RegisterJobs(jobs)
-}
-
-func RegisterJob(name string, job Job) {
-	module.RegisterJob(name, job)
-}
-
-func RegisterConfig(config Config) {
-	module.RegisterConfig(config)
-}
-
-func RegisterDriver(name string, driver Driver) {
-	module.RegisterDriver(name, driver)
-}
-
 func ListLogs(jobName string, offset, limit int) (int64, []Log) {
 	return module.ListLogs(jobName, offset, limit)
 }
